@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 pygame.init()
 
@@ -60,6 +61,7 @@ def draw_button(text, font, color, surface, x, y, width, height):
 
 # Draw header (score, math problem, lives)
 def draw_header(surface, score, problem, lives):
+
     # Draw score on the left
     draw_text(f'Score: {score:04}', header_font, WHITE, surface, (20, 20))
 
@@ -72,7 +74,76 @@ def draw_header(surface, score, problem, lives):
         surface.blit(heart_image, (screen_width - (i + 1) * 50, 15))
 
 def draw_character(surface):
-    surface.blit(character_image, (screen_width // 2, screen_height // 2))
+    surface.blit(character_image, (500, 500))
+
+# Generating questions for level 1
+def level_1():
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    operation = random.choice(['+', '-'])
+    problem = f"{num1} {operation} {num2}"
+    if operation == '+':
+        correct_answer = num1 + num2
+    else:
+        correct_answer = num1 - num2
+    answers = [correct_answer]
+    while len(answers) < 4:
+        wrong_answer = random.randint(1, 20)
+        if wrong_answer != correct_answer and wrong_answer not in answers:
+            answers.append(wrong_answer)
+    
+    random.shuffle(answers)
+    return problem, answers
+
+# Generating questions for level 2
+def level_2():
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    operation = random.choice(['*', '/'])
+    problem = f"{num1} {operation} {num2}"
+    if operation == '*':
+        correct_answer = num1 * num2
+    else:
+        correct_answer = num1 // num2 if num2 != 0 else num1  # Avoid division by zero
+    answers = [correct_answer]
+    while len(answers) < 4:
+        wrong_answer = random.randint(1, 20)
+        if wrong_answer != correct_answer and wrong_answer not in answers:
+            answers.append(wrong_answer)
+    
+    random.shuffle(answers)
+    return problem, answers
+
+# Generating questions for level 3
+
+def level_3():
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    num3 = random.randint(1, 10)
+    operation1 = random.choice(['+', '-', '*'])
+    operation2 = random.choice(['+', '-', '*'])
+    problem = f"({num1} {operation1} {num2}) {operation2} {num3}"
+    if operation1 == '+':
+        result1 = num1 + num2
+    elif operation1 == '-':
+        result1 = num1 - num2
+    else:
+        result1 = num1 * num2
+    if operation2 == '+':
+        correct_answer = result1 + num3
+    elif operation2 == '-':
+        correct_answer = result1 - num3
+    else:
+        correct_answer = result1 * num3
+    answers = [correct_answer]
+    while len(answers) < 4:
+        wrong_answer = random.randint(1, 50)
+        if wrong_answer != correct_answer and wrong_answer not in answers:
+            answers.append(wrong_answer)
+    
+    random.shuffle(answers)
+    return problem, answers
+
 
 # game state
 
@@ -83,11 +154,9 @@ LEVEL_3 = 'level_3'
 state = MENU  # start at menu
 
 # variables for the game
-
 score = 0  # initial score
-problem_1 = "2 + 2"  # placeholder for the math problem
-problem_2 = "2 * 2"  # placeholder for the math problem
-problem_3 = "(2 + 2) / 2"  # placeholder for the math problem
+problem = ""  # placeholder for the current math problem
+answers = []  # placeholder for the answers
 lives = 3  # number of lives
 
 # game loop
@@ -132,29 +201,49 @@ while running:
             if level1_button.collidepoint(mouse_pos):
                 print("Nível 1 selecionado")
                 state = LEVEL_1
+                problem, answers = level_1()  # Generate level 1 problem and answers
             elif level2_button.collidepoint(mouse_pos):
                 print("Nível 2 selecionado")
                 state = LEVEL_2
+                problem, answers = level_2()  # Generate level 2 problem and answers
             elif level3_button.collidepoint(mouse_pos):
                 print("Nível 3 selecionado")
                 state = LEVEL_3
+                problem, answers = level_3()  # Generate level 3 problem and answer
 
-    elif state == LEVEL_1:
-        # Draw the header (score, math problem, lives)
-        draw_header(screen, score, problem_1, lives)
+    elif state == LEVEL_1 or state == LEVEL_2 or state == LEVEL_3:
+
+        # draw the header (score, math problem, lives)
+        draw_header(screen, score, problem, lives)
         pygame.draw.line(screen, WHITE, (0, 80), (screen_width, 80), 5)
         draw_character(screen)
 
-    elif state == LEVEL_2:
-        # Draw the header (score, math problem, lives)
-        draw_header(screen, score, problem_2, lives)
-        pygame.draw.line(screen, WHITE, (0, 80), (screen_width, 80), 5)
+        # define the positions of the squares
+        square_width = 150
+        square_height = 100
+        square_gap = 100  # spacing between squares
+        square_y = screen_height // 4  # centered vertical position
 
-    elif state == LEVEL_3:
-        # Draw the header (score, math problem, lives)
-        draw_header(screen, score, problem_3, lives)
-        pygame.draw.line(screen, WHITE, (0, 0), (screen_width, 80), 5)
+        # calculates the starting position of the first square
+        total_width = (square_width * 4) + (square_gap * 3)
+        start_x = (screen_width - total_width) // 2
 
-    # update display
+        # list to store answer rectangles
+        answer_rects = []
+        
+        # draw the squares and answers
+        for i in range(4):
+            square_x = start_x + i * (square_width + square_gap)
+            # draw the square for the answer
+            square_rect = pygame.Rect(square_x, square_y, square_width, square_height)
+            pygame.draw.rect(screen, GRAY, square_rect)
+
+            # render response text inside square
+            draw_text(str(answers[i]), button_font, WHITE, screen, (square_x + 20, square_y + 30))
+
+            # stores the rectangle and the response value
+            answer_rects.append((square_rect, answers[i]))
 
     pygame.display.flip()
+
+pygame.quit()
