@@ -73,8 +73,8 @@ def draw_header(surface, score, problem, lives):
     for i in range(lives):
         surface.blit(heart_image, (screen_width - (i + 1) * 50, 15))
 
-def draw_character(surface):
-    surface.blit(character_image, (500, 500))
+def draw_character(surface,x_position,y_position):
+    surface.blit(character_image, (x_position, y_position))
 
 # Generating questions for level 1
 def level_1():
@@ -159,6 +159,14 @@ problem = ""  # placeholder for the current math problem
 answers = []  # placeholder for the answers
 lives = 3  # number of lives
 
+# velocity
+move_speed = 1
+
+# character's starting position
+
+x_position = screen_width // 2 
+y_position = 500
+
 # game loop
 
 running = True
@@ -167,6 +175,39 @@ while running:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    # capture key presses
+    keys = pygame.key.get_pressed()
+
+    # move the character to the left
+    if keys[pygame.K_LEFT]:
+        x_position -= move_speed
+
+    # move the character to the right
+    if keys[pygame.K_RIGHT]:
+        x_position += move_speed
+
+    # move the character to the up
+    if keys[pygame.K_UP]:
+        y_position -= move_speed
+
+    # move the character to the down
+    if keys[pygame.K_DOWN]:
+        y_position += move_speed
+
+    # prevent the character from leaving the screen (horizontal)
+
+    if x_position < 0:
+        x_position = 0
+    elif x_position > screen_width - 80:  # 80 is the width of the character
+        x_position = screen_width - 80
+
+    # prevent the character from leaving the screen (vertical)
+
+    if y_position < 80:  # prevents the character from going beyond the header line (80 pixels)
+        y_position = 80
+    elif y_position > screen_height - 80:  # 80 is the character's height
+        y_position = screen_height - 80
 
     # draw back screen
 
@@ -216,7 +257,8 @@ while running:
         # draw the header (score, math problem, lives)
         draw_header(screen, score, problem, lives)
         pygame.draw.line(screen, WHITE, (0, 80), (screen_width, 80), 5)
-        draw_character(screen)
+
+        draw_character(screen,x_position,y_position)
 
         # define the positions of the squares
         square_width = 150
