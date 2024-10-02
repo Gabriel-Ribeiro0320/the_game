@@ -159,6 +159,11 @@ problem = ""  # placeholder for the current math problem
 answers = []  # placeholder for the answers
 lives = 3  # number of lives
 
+# Variáveis do projétil
+projectile_color = (255, 0, 0)  # color red
+projectile_speed = 1
+projectile = None
+
 # velocity
 move_speed = 1
 
@@ -209,6 +214,10 @@ while running:
     elif y_position > screen_height - 80:  # 80 is the character's height
         y_position = screen_height - 80
 
+    # check if the player pressed SPACE to shoot
+    if keys[pygame.K_SPACE] and projectile is None:
+        projectile = [x_position, y_position]  # sets the initial position of the projectile
+
     # draw back screen
 
     screen.fill(BLACK)
@@ -242,15 +251,15 @@ while running:
             if level1_button.collidepoint(mouse_pos):
                 print("Nível 1 selecionado")
                 state = LEVEL_1
-                problem, answers = level_1()  # Generate level 1 problem and answers
+                problem, answers = level_1()  # generate level 1 problem and answers
             elif level2_button.collidepoint(mouse_pos):
                 print("Nível 2 selecionado")
                 state = LEVEL_2
-                problem, answers = level_2()  # Generate level 2 problem and answers
+                problem, answers = level_2()  # generate level 2 problem and answers
             elif level3_button.collidepoint(mouse_pos):
                 print("Nível 3 selecionado")
                 state = LEVEL_3
-                problem, answers = level_3()  # Generate level 3 problem and answer
+                problem, answers = level_3()  # generate level 3 problem and answer
 
     elif state == LEVEL_1 or state == LEVEL_2 or state == LEVEL_3:
 
@@ -285,6 +294,50 @@ while running:
 
             # stores the rectangle and the response value
             answer_rects.append((square_rect, answers[i]))
+
+        # add a flag to check if lives have already been reduced
+        lives_deducted = False
+
+        # if the projectile exists, move it and draw it
+        if projectile:
+            projectile[1] -= projectile_speed  # move projectile up
+            pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)  # Desenhar projétil
+
+            # check if the projectile left the screen
+            if projectile[1] < 0:
+                projectile = None  # restart the projectile
+
+            # check collision with responses
+            for rect, answer in answer_rects:
+                if rect.collidepoint(projectile):  # checks if the projectile collides with a response
+                    print(f"Acertou a resposta: {answer}")
+                    
+
+                    if answer == eval(problem):  
+                        score += 10
+                        projectile = None
+
+                        if state == LEVEL_1:
+                            problem, answers = level_1()
+                        elif state == LEVEL_2:
+                            problem, answers = level_2()
+                        elif state == LEVEL_3:
+                            problem, answers = level_3()
+                    else:
+                        if not lives_deducted:  
+                            lives -= 1  
+                            lives_deducted = True  
+                        projectile = None  
+
+                    break  # to avoid multiple collisions with the same projectile
+
+    # reset flag when projectile is reset or a new issue starts
+    if projectile is None:
+        lives_deducted = False  # reset flag
+           
+                
+    if lives <= 0:
+        running = False  
 
     pygame.display.flip()
 
