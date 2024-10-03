@@ -103,16 +103,18 @@ def level_1():
     random.shuffle(answers)
     return problem, answers
 
-
 def level_2():
-    num1 = random.randint(1, 10)
-    num2 = random.randint(1, 10)
     operation = random.choice(['*', '/'])
-    problem = f"({num1} {operation} {num2})"
     if operation == '*':
+        num1 = random.randint(1, 10)
+        num2 = random.randint(1, 10)
+        problem = f"({num1} {operation} {num2})"
         correct_answer = num1 * num2
     else:
-        correct_answer = num1 // num2 if num2 != 0 else num1
+        num2 = random.randint(1, 10)
+        num1 = num2 * random.randint(1, 10)
+        problem = f"({num1} {operation} {num2})"
+        correct_answer = num1 / num2
     answers = [correct_answer]
 
     while len(answers) < 15:
@@ -367,27 +369,26 @@ while running:
 
             for rect, answer in answer_rects:
                 if projectile is not None and rect.collidepoint(projectile[0], projectile[1]):
+                    # Check if the answer is correct
                     if answer == eval(problem):
                         score += 10
-                        projectile = None
                         if state == LEVEL_1:
                             problem, answers = level_1()
                         elif state == LEVEL_2:
                             problem, answers = level_2()
                         elif state == LEVEL_3:
                             problem, answers = level_3()
-
-                        # generate new positions only if the projectile collides with a correct answer
-
+                        # Generate new positions only if the projectile collides with a correct answer
                         positions = generate_random_positions(15, 30, 20,
                                                               screen_width, screen_height, 70)
-
                     else:
+                        # Deduct a life for a wrong answer
                         if not lives_deducted:
                             lives -= 1
                             lives_deducted = True
-                        projectile = None
 
+                    # Make the projectile disappear regardless of the outcome
+                    projectile = None
                     break
 
     # reset flag when projectile is reset or a new issue starts
