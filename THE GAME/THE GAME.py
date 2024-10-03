@@ -35,7 +35,7 @@ button_font = pygame.font.SysFont(None, 40)
 heart_image = pygame.image.load('heart.png')
 heart_image = pygame.transform.scale(heart_image, (40, 40))
 character_image = pygame.image.load('character.png')
-character_image = pygame.transform.scale(character_image, (60, 60))
+character_image = pygame.transform.scale(character_image, (40, 40))
 
 # draw texts
 
@@ -77,11 +77,15 @@ def generate_random_positions(num_answers, square_width, square_height, screen_w
         x = random.randint(70, screen_width - 70)
         y = random.randint(105, screen_height - 50)
         new_position = (x, y)
-        if all(not (abs(new_position[0] - pos[0]) < square_width + square_gap and
-                    abs(new_position[1] - pos[1]) < square_height + square_gap) for pos in positions):
-            positions.append(new_position)
+
+        # Verifica se a nova posição não está dentro da área proibida
+        if not (460 < x < 540 and 460 < y < 540):
+            if all(not (abs(new_position[0] - pos[0]) < square_width + square_gap and
+                        abs(new_position[1] - pos[1]) < square_height + square_gap) for pos in positions):
+                positions.append(new_position)
 
     return positions
+
 
 
 def level_1():
@@ -165,6 +169,7 @@ def check_collision_with_blocks(character_rect, answer_rects):
 
 # game status
 
+
 MENU = 'menu'
 LEVEL_1 = 'level_1'
 LEVEL_2 = 'level_2'
@@ -191,7 +196,7 @@ projectile_direction = 1
 
 # character's starting position
 
-x_position = screen_width // 2
+x_position = 500
 y_position = 500
 
 # game loop
@@ -202,6 +207,8 @@ while running:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    lives_deducted = False
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
@@ -222,15 +229,15 @@ while running:
 
     if x_position < 0:
         x_position = 0
-    elif x_position > screen_width - 80:
-        x_position = screen_width - 80
+    elif x_position > screen_width - 40:
+        x_position = screen_width - 40
 
     # prevent the character from leaving the screen (vertical)
 
-    if y_position < 80:
-        y_position = 80
-    elif y_position > screen_height - 80:
-        y_position = screen_height - 80
+    if y_position < 40:
+        y_position = 40
+    elif y_position > screen_height - 40:
+        y_position = screen_height - 40
 
     # check if the player pressed SPACE to shoot
 
@@ -238,11 +245,11 @@ while running:
 
         # projectile's initial position
 
-        projectile = [x_position + 60, y_position+30]
+        projectile = [x_position + 60, y_position + 30]
         projectile_fired_direction = projectile_direction
 
     # calculates the character's rectangle to check collision
-    character_rect = pygame.Rect(x_position, y_position, 60, 60)
+    character_rect = pygame.Rect(x_position, y_position, 40, 40)
 
     # clear screen
 
@@ -327,13 +334,13 @@ while running:
             character_rect, answer_rects)
         if collided_block:
             if keys[pygame.K_RIGHT] and character_rect.right > collided_block.left:
-                x_position = collided_block.left - character_rect.width
+                x_position = collided_block.left - 30
 
             elif keys[pygame.K_LEFT] and character_rect.left < collided_block.right:
                 x_position = collided_block.right
 
             if keys[pygame.K_DOWN] and character_rect.bottom > collided_block.top:
-                y_position = collided_block.top - character_rect.height
+                y_position = collided_block.top - 30
 
             elif keys[pygame.K_UP] and character_rect.top < collided_block.bottom:
                 y_position = collided_block.bottom
@@ -369,26 +376,33 @@ while running:
 
             for rect, answer in answer_rects:
                 if projectile is not None and rect.collidepoint(projectile[0], projectile[1]):
-                    # Check if the answer is correct
                     if answer == eval(problem):
                         score += 10
+                        projectile = None
                         if state == LEVEL_1:
                             problem, answers = level_1()
+                            projectile = None
+                            pygame.time.delay(100)
                         elif state == LEVEL_2:
                             problem, answers = level_2()
+                            projectile = None
+                            pygame.time.delay(100)
                         elif state == LEVEL_3:
                             problem, answers = level_3()
-                        # Generate new positions only if the projectile collides with a correct answer
-                        positions = generate_random_positions(15, 30, 20,
-                                                              screen_width, screen_height, 70)
+                            projectile = None
+                            pygame.time.delay(100)
+                        # generate new positions only if the projectile collides with a correct answer
+
+                        positions = generate_random_positions(15, 30, 20, screen_width, screen_height, 70)
+                        x_position = 500
+                        y_position = 500
                     else:
-                        # Deduct a life for a wrong answer
                         if not lives_deducted:
                             lives -= 1
                             lives_deducted = True
 
-                    # Make the projectile disappear regardless of the outcome
-                    projectile = None
+                        # remove the projectile to don't remove too many lives
+                        projectile = None
                     break
 
     # reset flag when projectile is reset or a new issue starts
