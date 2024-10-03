@@ -329,19 +329,23 @@ while running:
 
         # draw projectiles and assigns functions
 
-        if projectile:
+        if projectile is not None:
             projectile[0] += projectile_speed
             pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)
 
             # checks if the projectile goes wrong
 
-            if projectile[0] > screen_width:
+            if projectile[1] > screen_width:
                 projectile = None
+
+            if projectile[0] < 0 or projectile[0] > screen_width:
+                projectile = None  
+
 
             # check colision with answers
 
             for rect, answer in answer_rects:
-                if rect.collidepoint(projectile):
+                if projectile is not None and rect.collidepoint(projectile[0], projectile[1]):
                     if answer == eval(problem):
                         score += 10
                         projectile = None
