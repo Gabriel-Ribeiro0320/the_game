@@ -151,6 +151,13 @@ def level_3():
     random.shuffle(answers)
     return problem, answers
 
+# check if the character collided with any blocks
+def check_collision_with_blocks(character_rect, answer_rects):
+    for rect, _ in answer_rects:
+        if character_rect.colliderect(rect):
+            return rect  
+    return None
+
 
 # game status
 
@@ -221,6 +228,9 @@ while running:
 
         projectile = [x_position + 60, y_position+30]
 
+    # calculates the character's rectangle to check collision
+    character_rect = pygame.Rect(x_position, y_position, 60, 60)
+
     # clear screen
 
     screen.fill(BLACK)
@@ -290,12 +300,28 @@ while running:
 
         for i in range(15):
             square_x, square_y = positions[i]
-            square_rect = pygame.Rect(square_x, square_y, 70, 50)
+            square_rect = pygame.Rect(square_x, square_y, 60, 40)
             pygame.draw.rect(screen, BLACK, square_rect)
             text_surface = button_font.render(str(answers[i]), True, WHITE)
             text_rect = text_surface.get_rect(center=square_rect.center)
             screen.blit(text_surface, text_rect)
             answer_rects.append((square_rect, answers[i]))
+
+        # checks collision between the character and the blocks
+
+        collided_block = check_collision_with_blocks(character_rect, answer_rects)
+        if collided_block:
+            if keys[pygame.K_RIGHT] and character_rect.right > collided_block.left:
+                x_position = collided_block.left - character_rect.width 
+
+            elif keys[pygame.K_LEFT] and character_rect.left < collided_block.right:
+                x_position = collided_block.right 
+                
+            if keys[pygame.K_DOWN] and character_rect.bottom > collided_block.top:
+                y_position = collided_block.top - character_rect.height  
+                
+            elif keys[pygame.K_UP] and character_rect.top < collided_block.bottom:
+                y_position = collided_block.bottom 
 
         # confer number of lives
 
