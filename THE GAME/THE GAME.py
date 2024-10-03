@@ -219,7 +219,7 @@ while running:
 
         # projectile's initial position
 
-        projectile = [x_position, y_position]
+        projectile = [x_position + 60, y_position+30]
 
     # clear screen
 
@@ -304,12 +304,12 @@ while running:
         # draw projectiles and assigns functions
 
         if projectile:
-            projectile[1] -= projectile_speed
+            projectile[0] += projectile_speed
             pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)
 
             # checks if the projectile goes wrong
 
-            if projectile[1] < 0:
+            if projectile[0] > screen_width:
                 projectile = None
 
             # check colision with answers
