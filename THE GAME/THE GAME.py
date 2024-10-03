@@ -39,6 +39,7 @@ character_image = pygame.transform.scale(character_image, (60, 60))
 
 # draw texts
 
+
 def draw_text(text, font, color, surface, pos):
     text_obj = font.render(text, True, color)
     text_rect = text_obj.get_rect()
@@ -58,13 +59,14 @@ def draw_button(text, font, color, surface, x, y, width, height):
 def draw_header(surface, score, problem, lives):
     draw_text(f'{score:01}', font, WHITE, surface, (20, 15))
     problem_text_width = font.size(problem)[0]
-    draw_text(problem, font, WHITE, surface, (screen_width // 2 - problem_text_width // 2, 10))
+    draw_text(problem, font, WHITE, surface,
+              (screen_width // 2 - problem_text_width // 2, 10))
     for i in range(lives):
         surface.blit(heart_image, (990 - (i + 1) * 50, 15))
 
 
-def draw_character(surface, x_position, y_position):
-    surface.blit(character_image, (x_position, y_position))
+def draw_character(surface, x_position, y_position, image):
+    surface.blit(image, (x_position, y_position))
 
 
 # random positions to answers
@@ -152,12 +154,12 @@ def level_3():
     return problem, answers
 
 # check if the character collided with any blocks
+
 def check_collision_with_blocks(character_rect, answer_rects):
     for rect, _ in answer_rects:
         if character_rect.colliderect(rect):
-            return rect  
+            return rect
     return None
-
 
 # game status
 
@@ -181,6 +183,9 @@ move_speed = 0.5
 projectile_color = RED
 projectile_speed = 1
 projectile = None
+projectile_fired_direction = None
+character_image_current = character_image
+projectile_direction = 1
 
 # character's starting position
 
@@ -199,8 +204,13 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         x_position -= move_speed
+        character_image_current = pygame.transform.flip(
+            character_image, True, False)
+        projectile_direction = -1
     if keys[pygame.K_RIGHT]:
         x_position += move_speed
+        character_image_current = character_image
+        projectile_direction = 1
     if keys[pygame.K_UP]:
         y_position -= move_speed
     if keys[pygame.K_DOWN]:
@@ -227,6 +237,7 @@ while running:
         # projectile's initial position
 
         projectile = [x_position + 60, y_position+30]
+        projectile_fired_direction = projectile_direction
 
     # calculates the character's rectangle to check collision
     character_rect = pygame.Rect(x_position, y_position, 60, 60)
@@ -242,7 +253,8 @@ while running:
         menu_text_pos = (menu_text_width, menu_text_height)
         draw_text('MATH WARS', font, WHITE, screen, menu_text_pos)
         secondary_text_pos = (menu_text_width + 70, smaller_text_height)
-        draw_text('ESCOLHA A DIFICULDADE:', smaller_font, WHITE, screen, secondary_text_pos)
+        draw_text('ESCOLHA A DIFICULDADE:', smaller_font,
+                  WHITE, screen, secondary_text_pos)
         secondary_text_pos_2 = (200, smaller_text_height + 400)
         draw_text(
             '*Nível 1 - Adição e Subtração *Nível 2 - Multiplicação e Divisão *Nível 3 - Expressões Númericas',
@@ -290,7 +302,7 @@ while running:
 
         draw_header(screen, score, problem, lives)
         pygame.draw.line(screen, WHITE, (0, 70), (screen_width, 70), 1)
-        draw_character(screen, x_position, y_position)
+        draw_character(screen, x_position, y_position, character_image_current)
 
         # stock answers
 
@@ -309,19 +321,20 @@ while running:
 
         # checks collision between the character and the blocks
 
-        collided_block = check_collision_with_blocks(character_rect, answer_rects)
+        collided_block = check_collision_with_blocks(
+            character_rect, answer_rects)
         if collided_block:
             if keys[pygame.K_RIGHT] and character_rect.right > collided_block.left:
-                x_position = collided_block.left - character_rect.width 
+                x_position = collided_block.left - character_rect.width
 
             elif keys[pygame.K_LEFT] and character_rect.left < collided_block.right:
-                x_position = collided_block.right 
-                
+                x_position = collided_block.right
+
             if keys[pygame.K_DOWN] and character_rect.bottom > collided_block.top:
-                y_position = collided_block.top - character_rect.height  
-                
+                y_position = collided_block.top - character_rect.height
+
             elif keys[pygame.K_UP] and character_rect.top < collided_block.bottom:
-                y_position = collided_block.bottom 
+                y_position = collided_block.bottom
 
         # confer number of lives
 
@@ -330,17 +343,25 @@ while running:
         # draw projectiles and assigns functions
 
         if projectile is not None:
-            projectile[0] += projectile_speed
-            pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)
+            if projectile_fired_direction == 1:
+                projectile[0] += projectile_speed
+                pygame.draw.circle(screen, projectile_color,
+                                   (projectile[0], projectile[1]), 5)
+            else:
+                projectile[0] -= projectile_speed
+                pygame.draw.circle(screen, projectile_color,
+                                   (projectile[0], projectile[1]), 5)
 
             # checks if the projectile goes wrong
 
-            if projectile[1] > screen_width:
+            if projectile[1] < 0:
                 projectile = None
 
-            if projectile[0] < 0 or projectile[0] > screen_width:
-                projectile = None  
+            elif projectile[1] > screen_width:
+                projectile = None
 
+            elif projectile[0] < 0 or projectile[0] > screen_width:
+                projectile = None
 
             # check colision with answers
 

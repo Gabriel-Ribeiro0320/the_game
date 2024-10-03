@@ -65,8 +65,8 @@ def draw_header(surface, score, problem, lives):
         surface.blit(heart_image, (990 - (i + 1) * 50, 15))
 
 
-def draw_character(surface, x_position, y_position):
-    surface.blit(character_image, (x_position, y_position))
+def draw_character(surface, x_position, y_position, image):
+    surface.blit(image, (x_position, y_position))
 
 
 # random positions to answers
@@ -182,11 +182,16 @@ move_speed = 0.5
 projectile_color = RED
 projectile_speed = 1
 projectile = None
+projectile_fired_direction = None
+character_image_current = character_image  
+projectile_direction = 1
+
 
 # character's starting position
 
 x_position = screen_width // 2
 y_position = 500
+
 
 # game loop
 
@@ -200,8 +205,12 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         x_position -= move_speed
+        character_image_current = pygame.transform.flip(character_image, True, False)  
+        projectile_direction = -1  
     if keys[pygame.K_RIGHT]:
         x_position += move_speed
+        character_image_current = character_image  
+        projectile_direction = 1 
     if keys[pygame.K_UP]:
         y_position -= move_speed
     if keys[pygame.K_DOWN]:
@@ -221,6 +230,7 @@ while running:
     elif y_position > screen_height - 80:
         y_position = screen_height - 80
 
+
     # check if the player pressed SPACE to shoot
 
     if keys[pygame.K_SPACE] and projectile is None:
@@ -228,6 +238,8 @@ while running:
         # projectile's initial position
 
         projectile = [x_position + 60, y_position + 30]
+
+        projectile_fired_direction = projectile_direction 
 
     # Calcula o retângulo do personagem para checar colisão
     character_rect = pygame.Rect(x_position, y_position, 60, 60)
@@ -292,7 +304,7 @@ while running:
 
         draw_header(screen, score, problem, lives)
         pygame.draw.line(screen, WHITE, (0, 70), (screen_width, 70), 1)
-        draw_character(screen, x_position, y_position)
+        draw_character(screen, x_position, y_position, character_image_current)
 
         # stock answers
 
@@ -332,15 +344,22 @@ while running:
         # draw projectiles and assigns functions
 
         if projectile is not None:
-            projectile[0] += projectile_speed
-            pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)
+            if projectile_fired_direction == 1:
+                projectile[0] += projectile_speed
+                pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)
+            else:
+                projectile[0] -= projectile_speed
+                pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)
 
             # checks if the projectile goes wrong
 
-            if projectile[1] > screen_width:
+            if projectile[1] < 0:
+                projectile = None  
+
+            elif projectile[1] > screen_width:
                 projectile = None
 
-            if projectile[0] < 0 or projectile[0] > screen_width:
+            elif projectile[0] < 0 or projectile[0] > screen_width:
                 projectile = None  
 
             # check colision with answers
