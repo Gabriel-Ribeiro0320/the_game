@@ -68,7 +68,8 @@ def draw_header(surface, score, problem, lives):
 def draw_character(surface, x_position, y_position, image):
     surface.blit(image, (x_position, y_position))
 
-#function for draw the time
+# function for draw the time
+
 
 def draw_timer(surface, time_left):
     minutes = time_left // 60000
@@ -95,7 +96,6 @@ def generate_random_positions(num_answers, square_width, square_height, screen_w
     return positions
 
 
-
 def level_1():
     num1 = random.randint(1, 10)
     num2 = random.randint(1, 10)
@@ -114,6 +114,7 @@ def level_1():
 
     random.shuffle(answers)
     return problem, answers
+
 
 def level_2():
     operation = random.choice(['*', '/'])
@@ -169,6 +170,7 @@ def level_3():
 
 # check if the character collided with any blocks
 
+
 def check_collision_with_blocks(character_rect, answer_rects):
     for rect, _ in answer_rects:
         if character_rect.colliderect(rect):
@@ -176,6 +178,7 @@ def check_collision_with_blocks(character_rect, answer_rects):
     return None
 
 # game status
+
 
 MENU = 'menu'
 LEVEL_1 = 'level_1'
@@ -257,8 +260,12 @@ while running:
 
         # projectile's initial position
 
-        projectile = [x_position + 60, y_position + 30]
-        projectile_fired_direction = projectile_direction
+        if projectile_direction == 1:
+            projectile = [x_position + 30, y_position + 27]
+            projectile_fired_direction = projectile_direction
+        elif projectile_direction == -1:
+            projectile = [x_position + 10, y_position + 27]
+            projectile_fired_direction = projectile_direction
 
     # calculates the character's rectangle to check collision
     character_rect = pygame.Rect(x_position, y_position, 40, 40)
@@ -414,7 +421,8 @@ while running:
                             pygame.time.delay(100)
                         # generate new positions only if the projectile collides with a correct answer
 
-                        positions = generate_random_positions(15, 30, 20, screen_width, screen_height, 70)
+                        positions = generate_random_positions(
+                            15, 30, 20, screen_width, screen_height, 70)
                         x_position = 500
                         y_position = 500
                     else:
@@ -435,18 +443,19 @@ while running:
         running = False
         state = GAME_OVER
 
-
-    #print victory on screen
+    # print victory on screen
 
     if state == GAME_OVER:
         screen.fill(BLACK)
         game_over_text = font.render("Game Over", True, WHITE)
         score_text = font.render(f"Score total: {score}", True, WHITE)
-        screen.blit(game_over_text, (screen_width // 2 - game_over_text.get_width() // 2, screen_height // 2 - 20))
-        screen.blit(score_text, (screen_width // 2 - score_text.get_width() // 2, screen_height // 2 + 20))
-        pygame.display.flip()  
-        pygame.time.delay(3000) 
-        running = False 
+        screen.blit(game_over_text, (screen_width // 2 -
+                    game_over_text.get_width() // 2, screen_height // 2 - 20))
+        screen.blit(score_text, (screen_width // 2 -
+                    score_text.get_width() // 2, screen_height // 2 + 20))
+        pygame.display.flip()
+        pygame.time.delay(3000)
+        running = False
 
     # print game on screen
 
@@ -454,11 +463,13 @@ while running:
         screen.fill(BLACK)
         victory_text = font.render("Parabéns pela vitória!", True, WHITE)
         score_text = font.render(f"Score total: {score}", True, WHITE)
-        screen.blit(victory_text, (screen_width // 2 - victory_text.get_width() // 2, screen_height // 2 - 20))
-        screen.blit(score_text, (screen_width // 2 - score_text.get_width() // 2, screen_height // 2 + 20))
-        pygame.display.flip()  
-        pygame.time.delay(3000)  
-        running = False  
+        screen.blit(victory_text, (screen_width // 2 -
+                    victory_text.get_width() // 2, screen_height // 2 - 20))
+        screen.blit(score_text, (screen_width // 2 -
+                    score_text.get_width() // 2, screen_height // 2 + 20))
+        pygame.display.flip()
+        pygame.time.delay(3000)
+        running = False
 
     pygame.display.flip()
 
