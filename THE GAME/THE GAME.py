@@ -39,6 +39,10 @@ heart_image = pygame.image.load('heart.png')
 heart_image = pygame.transform.scale(heart_image, (40, 40))
 character_image = pygame.image.load('character.png')
 character_image = pygame.transform.scale(character_image, (40, 40))
+character_image_up = pygame.image.load('character_up.png')
+character_image_up = pygame.transform.scale(character_image_up, (40, 40))
+character_image_down = pygame.image.load('character_down.png')
+character_image_down = pygame.transform.scale(character_image_down, (40, 40))
 
 # draw texts
 
@@ -231,17 +235,24 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         x_position -= move_speed
-        character_image_current = pygame.transform.flip(
-            character_image, True, False)
+        character_image_current = pygame.transform.flip(character_image, True, False)
         projectile_direction = -1
+        projectile_vertical_direction = 0
     if keys[pygame.K_RIGHT]:
         x_position += move_speed
         character_image_current = character_image
         projectile_direction = 1
+        projectile_vertical_direction = 0
     if keys[pygame.K_UP]:
         y_position -= move_speed
+        character_image_current = character_image_up
+        projectile_direction = 0
+        projectile_vertical_direction = -1
     if keys[pygame.K_DOWN]:
         y_position += move_speed
+        character_image_current = character_image_down
+        projectile_direction = 0
+        projectile_vertical_direction = 1
 
     # prevent the character from leaving the screen (horizontal)
 
@@ -263,12 +274,9 @@ while running:
 
         # projectile's initial position
 
-        if projectile_direction == 1:
-            projectile = [x_position + 30, y_position + 27]
-            projectile_fired_direction = projectile_direction
-        elif projectile_direction == -1:
-            projectile = [x_position + 10, y_position + 27]
-            projectile_fired_direction = projectile_direction
+        projectile = [x_position + 20, y_position + 20]
+        projectile_fired_direction = projectile_direction
+        projectile_vertical_direction = projectile_vertical_direction
 
     # calculates the character's rectangle to check collision
     character_rect = pygame.Rect(x_position, y_position, 40, 40)
@@ -386,14 +394,15 @@ while running:
         # draw projectiles and assigns functions
 
         if projectile is not None:
-            if projectile_fired_direction == 1:
+            pygame.draw.circle(screen, projectile_color, projectile, 5)
+            if projectile_fired_direction == 1:  # shoot to right
                 projectile[0] += projectile_speed
-                pygame.draw.circle(screen, projectile_color,
-                                   (projectile[0], projectile[1]), 5)
-            else:
+            elif projectile_fired_direction == -1:  # shoot to left
                 projectile[0] -= projectile_speed
-                pygame.draw.circle(screen, projectile_color,
-                                   (projectile[0], projectile[1]), 5)
+            elif projectile_vertical_direction == -1:  # up shoot
+                projectile[1] -= projectile_speed
+            elif projectile_vertical_direction == 1:  # down shoot
+                projectile[1] += projectile_speed
 
             # checks if the projectile goes wrong
 
