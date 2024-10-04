@@ -263,8 +263,8 @@ while running:
 
     # prevent the character from leaving the screen (vertical)
 
-    if y_position < 40:
-        y_position = 40
+    if y_position < 70:
+        y_position = 70
     elif y_position > screen_height - 40:
         y_position = screen_height - 40
 
@@ -372,19 +372,15 @@ while running:
 
         # checks collision between the character and the blocks
 
-        collided_block = check_collision_with_blocks(
-            character_rect, answer_rects)
+        collided_block = check_collision_with_blocks(character_rect, answer_rects)
         if collided_block:
-            if keys[pygame.K_RIGHT] and character_rect.right > collided_block.left:
-                x_position = collided_block.left - 30
-
-            elif keys[pygame.K_LEFT] and character_rect.left < collided_block.right:
+            if keys[pygame.K_RIGHT]:
+                x_position = collided_block.left - character_rect.width
+            elif keys[pygame.K_LEFT]:
                 x_position = collided_block.right
-
-            if keys[pygame.K_DOWN] and character_rect.bottom > collided_block.top:
-                y_position = collided_block.top - 30
-
-            elif keys[pygame.K_UP] and character_rect.top < collided_block.bottom:
+            if keys[pygame.K_DOWN]:
+                y_position = collided_block.top - character_rect.height
+            elif keys[pygame.K_UP]:
                 y_position = collided_block.bottom
 
         # confer number of lives

@@ -27,8 +27,11 @@ RED = (255, 0, 0)
 # fonts
 
 font = pygame.font.SysFont(None, 70)
+font2 = pygame.font.Font(None, 50)
+font3 = pygame.font.Font(None, 25)
 smaller_font = pygame.font.SysFont(None, 20)
 button_font = pygame.font.SysFont(None, 40)
+score_and_time_font = pygame.font.SysFont(None, 10)
 
 # upload images
 
@@ -61,7 +64,9 @@ def draw_button(text, font, color, surface, x, y, width, height):
 
 
 def draw_header(surface, score, problem, lives):
-    draw_text(f'{score:01}', font, WHITE, surface, (20, 15))
+    draw_text(f'{score:01}', font, WHITE, surface, (40, 15))
+    draw_text(f'score:', smaller_font, WHITE, surface, (1, 1))
+    draw_text(f'time:', smaller_font, WHITE, surface, (87, 1))
     problem_text_width = font.size(problem)[0]
     draw_text(problem, font, WHITE, surface,
               (screen_width // 2 - problem_text_width // 2, 10))
@@ -90,8 +95,6 @@ def generate_random_positions(num_answers, square_width, square_height, screen_w
         x = random.randint(70, screen_width - 70)
         y = random.randint(105, screen_height - 50)
         new_position = (x, y)
-
-        # Verifica se a nova posição não está dentro da área proibida
         if not (460 < x < 540 and 460 < y < 540):
             if all(not (abs(new_position[0] - pos[0]) < square_width + square_gap and
                         abs(new_position[1] - pos[1]) < square_height + square_gap) for pos in positions):
@@ -111,7 +114,7 @@ def level_1():
         correct_answer = num1 - num2
     answers = [correct_answer]
 
-    while len(answers) < 15:
+    while len(answers) < 13:
         wrong_answer = random.randint(1, 20)
         if wrong_answer != correct_answer and wrong_answer not in answers:
             answers.append(wrong_answer)
@@ -134,7 +137,7 @@ def level_2():
         correct_answer = num1 / num2
     answers = [correct_answer]
 
-    while len(answers) < 15:
+    while len(answers) < 13:
         wrong_answer = random.randint(1, 20)
         if wrong_answer != correct_answer and wrong_answer not in answers:
             answers.append(wrong_answer)
@@ -164,7 +167,7 @@ def level_3():
         correct_answer = result1 * num3
     answers = [correct_answer]
 
-    while len(answers) < 15:
+    while len(answers) < 13:
         wrong_answer = random.randint(1, 50)
         if wrong_answer != correct_answer and wrong_answer not in answers:
             answers.append(wrong_answer)
@@ -218,8 +221,6 @@ projectile_direction = 1
 x_position = 500
 y_position = 500
 
-projectile_vertical_direction = 0
-
 # game loop
 
 running = True
@@ -236,7 +237,7 @@ while running:
         x_position -= move_speed
         character_image_current = pygame.transform.flip(character_image, True, False)
         projectile_direction = -1
-        projectile_vertical_direction = 0  # Projétil só vai na horizontal
+        projectile_vertical_direction = 0
     if keys[pygame.K_RIGHT]:
         x_position += move_speed
         character_image_current = character_image
@@ -244,12 +245,12 @@ while running:
         projectile_vertical_direction = 0
     if keys[pygame.K_UP]:
         y_position -= move_speed
-        character_image_current = character_image_up  # Troca sprite para cima
-        projectile_direction = 0  # Projétil só vai na vertical
+        character_image_current = character_image_up
+        projectile_direction = 0
         projectile_vertical_direction = -1
     if keys[pygame.K_DOWN]:
         y_position += move_speed
-        character_image_current = character_image_down  # Troca sprite para baixo
+        character_image_current = character_image_down
         projectile_direction = 0
         projectile_vertical_direction = 1
 
@@ -262,8 +263,8 @@ while running:
 
     # prevent the character from leaving the screen (vertical)
 
-    if y_position < 40:
-        y_position = 40
+    if y_position < 70:
+        y_position = 70
     elif y_position > screen_height - 40:
         y_position = screen_height - 40
 
@@ -321,18 +322,21 @@ while running:
             if level1_button.collidepoint(mouse_pos):
                 state = LEVEL_1
                 problem, answers = level_1()
-                positions = generate_random_positions(15, 30, 20, screen_width,
+                positions = generate_random_positions(13, 30, 20, screen_width,
                                                       screen_height, 70)
+                start_time = pygame.time.get_ticks()
             elif level2_button.collidepoint(mouse_pos):
                 state = LEVEL_2
                 problem, answers = level_2()
-                positions = generate_random_positions(15, 30, 20, screen_width,
+                positions = generate_random_positions(13, 30, 20, screen_width,
                                                       screen_height, 70)
+                start_time = pygame.time.get_ticks()
             elif level3_button.collidepoint(mouse_pos):
                 state = LEVEL_3
                 problem, answers = level_3()
-                positions = generate_random_positions(15, 30, 20, screen_width,
+                positions = generate_random_positions(13, 30, 20, screen_width,
                                                       screen_height, 70)
+                start_time = pygame.time.get_ticks()
 
     elif state == LEVEL_1 or state == LEVEL_2 or state == LEVEL_3:
 
@@ -357,10 +361,16 @@ while running:
 
         # draw answers
 
-        for i in range(15):
+        for i in range(13):
             square_x, square_y = positions[i]
             square_rect = pygame.Rect(square_x, square_y, 60, 40)
+
+            # draw a white bord
+            pygame.draw.rect(screen, WHITE, square_rect.inflate(6, 6))  # white bord
+
+            # draw the squares
             pygame.draw.rect(screen, BLACK, square_rect)
+
             text_surface = button_font.render(str(answers[i]), True, WHITE)
             text_rect = text_surface.get_rect(center=square_rect.center)
             screen.blit(text_surface, text_rect)
@@ -368,19 +378,15 @@ while running:
 
         # checks collision between the character and the blocks
 
-        collided_block = check_collision_with_blocks(
-            character_rect, answer_rects)
+        collided_block = check_collision_with_blocks(character_rect, answer_rects)
         if collided_block:
-            if keys[pygame.K_RIGHT] and character_rect.right > collided_block.left:
-                x_position = collided_block.left - 30
-
-            elif keys[pygame.K_LEFT] and character_rect.left < collided_block.right:
+            if keys[pygame.K_RIGHT]:
+                x_position = collided_block.left - character_rect.width
+            elif keys[pygame.K_LEFT]:
                 x_position = collided_block.right
-
-            if keys[pygame.K_DOWN] and character_rect.bottom > collided_block.top:
-                y_position = collided_block.top - 30
-
-            elif keys[pygame.K_UP] and character_rect.top < collided_block.bottom:
+            if keys[pygame.K_DOWN]:
+                y_position = collided_block.top - character_rect.height
+            elif keys[pygame.K_UP]:
                 y_position = collided_block.bottom
 
         # confer number of lives
@@ -390,6 +396,7 @@ while running:
         # draw projectiles and assigns functions
 
         if projectile is not None:
+            pygame.draw.circle(screen, projectile_color, projectile, 5)
             if projectile_fired_direction == 1:  # shoot to right
                 projectile[0] += projectile_speed
             elif projectile_fired_direction == -1:  # shoot to left
@@ -398,10 +405,6 @@ while running:
                 projectile[1] -= projectile_speed
             elif projectile_vertical_direction == 1:  # down shoot
                 projectile[1] += projectile_speed
-
-            # Desenhar o projétil
-            pygame.draw.circle(screen, projectile_color, (projectile[0], projectile[1]), 5)
-
 
             # checks if the projectile goes wrong
 
@@ -461,12 +464,12 @@ while running:
 
     if state == GAME_OVER:
         screen.fill(BLACK)
-        game_over_text = font.render("Game Over", True, WHITE)
-        score_text = font.render(f"Score total: {score}", True, WHITE)
+        game_over_text = font2.render("Boa Tentativa!", True, WHITE)
+        score_text = font3.render(f"Você acertou {score} perguntas!", True, WHITE)
         screen.blit(game_over_text, (screen_width // 2 -
-                    game_over_text.get_width() // 2, screen_height // 2 - 20))
+                    game_over_text.get_width() // 2, 280))
         screen.blit(score_text, (screen_width // 2 -
-                    score_text.get_width() // 2, screen_height // 2 + 20))
+                    score_text.get_width() // 2, 320))
         pygame.display.flip()
         pygame.time.delay(3000)
         running = False
@@ -475,12 +478,12 @@ while running:
 
     elif state == VICTORY:
         screen.fill(BLACK)
-        victory_text = font.render("Parabéns pela vitória!", True, WHITE)
-        score_text = font.render(f"Score total: {score}", True, WHITE)
+        victory_text = font2.render("Parabéns! Você resistiu bravamente!", True, WHITE)
+        score_text = font3.render(f"Você acertou {score} perguntas!", True, WHITE)
         screen.blit(victory_text, (screen_width // 2 -
-                    victory_text.get_width() // 2, screen_height // 2 - 20))
+                    victory_text.get_width() // 2, 280))
         screen.blit(score_text, (screen_width // 2 -
-                    score_text.get_width() // 2, screen_height // 2 + 20))
+                    score_text.get_width() // 2, 320))
         pygame.display.flip()
         pygame.time.delay(3000)
         running = False
