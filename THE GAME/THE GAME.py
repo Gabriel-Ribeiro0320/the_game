@@ -33,6 +33,10 @@ smaller_font = pygame.font.SysFont(None, 20)
 button_font = pygame.font.SysFont(None, 40)
 score_and_time_font = pygame.font.SysFont(None, 10)
 
+# sounds
+
+paddle_sound = pygame.mixer.Sound('sounds/paddle.wav')
+
 # upload images
 
 heart_image = pygame.image.load('heart.png')
@@ -415,6 +419,7 @@ while running:
 
             for rect, answer in answer_rects:
                 if projectile is not None and rect.collidepoint(projectile[0], projectile[1]):
+                    paddle_sound.play()
                     if answer == eval(problem):
                         score += 1
                         projectile = None
