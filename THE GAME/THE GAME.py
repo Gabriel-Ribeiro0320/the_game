@@ -68,6 +68,14 @@ def draw_header(surface, score, problem, lives):
 def draw_character(surface, x_position, y_position, image):
     surface.blit(image, (x_position, y_position))
 
+#function for draw the time
+
+def draw_timer(surface, time_left):
+    minutes = time_left // 60000
+    seconds = (time_left % 60000) // 1000
+    timer_text = f"{minutes}:{seconds:02}"
+    draw_text(timer_text, font, WHITE, surface, (120, 15))
+
 
 # random positions to answers
 
@@ -169,11 +177,12 @@ def check_collision_with_blocks(character_rect, answer_rects):
 
 # game status
 
-
 MENU = 'menu'
 LEVEL_1 = 'level_1'
 LEVEL_2 = 'level_2'
 LEVEL_3 = 'level_3'
+VICTORY = 'victory'
+GAME_OVER = 'game_over'
 state = MENU
 
 # game variables
@@ -184,6 +193,9 @@ problem = ""
 answers = []
 positions = []
 move_speed = 0.5
+start_time = pygame.time.get_ticks()
+time_limit = 60000
+time_left = time_limit
 
 # projectile variables
 
@@ -307,8 +319,17 @@ while running:
 
     elif state == LEVEL_1 or state == LEVEL_2 or state == LEVEL_3:
 
+        # update the timer
+
+        current_time = pygame.time.get_ticks()
+        time_left = time_limit - (current_time - start_time)
+
+        if time_left <= 0:
+            state = 'victory'
+
         # draw level interface
 
+        draw_timer(screen, time_left)
         draw_header(screen, score, problem, lives)
         pygame.draw.line(screen, WHITE, (0, 70), (screen_width, 70), 1)
         draw_character(screen, x_position, y_position, character_image_current)
@@ -377,7 +398,7 @@ while running:
             for rect, answer in answer_rects:
                 if projectile is not None and rect.collidepoint(projectile[0], projectile[1]):
                     if answer == eval(problem):
-                        score += 10
+                        score += 1
                         projectile = None
                         if state == LEVEL_1:
                             problem, answers = level_1()
@@ -412,6 +433,32 @@ while running:
 
     if lives <= 0:
         running = False
+        state = GAME_OVER
+
+
+    #print victory on screen
+
+    if state == GAME_OVER:
+        screen.fill(BLACK)
+        game_over_text = font.render("Game Over", True, WHITE)
+        score_text = font.render(f"Score total: {score}", True, WHITE)
+        screen.blit(game_over_text, (screen_width // 2 - game_over_text.get_width() // 2, screen_height // 2 - 20))
+        screen.blit(score_text, (screen_width // 2 - score_text.get_width() // 2, screen_height // 2 + 20))
+        pygame.display.flip()  
+        pygame.time.delay(3000) 
+        running = False 
+
+    # print game on screen
+
+    elif state == VICTORY:
+        screen.fill(BLACK)
+        victory_text = font.render("Parabéns pela vitória!", True, WHITE)
+        score_text = font.render(f"Score total: {score}", True, WHITE)
+        screen.blit(victory_text, (screen_width // 2 - victory_text.get_width() // 2, screen_height // 2 - 20))
+        screen.blit(score_text, (screen_width // 2 - score_text.get_width() // 2, screen_height // 2 + 20))
+        pygame.display.flip()  
+        pygame.time.delay(3000)  
+        running = False  
 
     pygame.display.flip()
 
