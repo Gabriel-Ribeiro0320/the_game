@@ -310,11 +310,11 @@ while running:
         button_height = 50
         button_gap = 50
 
-        level1_button = draw_button('NÍVEL 1', button_font, BLACK, screen, 200, 300, button_width,
+        level1_button = draw_button('NÍVEL 1', button_font, BLACK, screen, 235, 300, button_width,
                                     button_height)
-        level2_button = draw_button('NÍVEL 2', button_font, BLACK, screen, 200 + button_width + button_gap,
+        level2_button = draw_button('NÍVEL 2', button_font, BLACK, screen, 235 + button_width + button_gap,
                                     300, button_width, button_height)
-        level3_button = draw_button('NÍVEL 3', button_font, BLACK, screen, 200 + (button_width + button_gap) * 2,
+        level3_button = draw_button('NÍVEL 3', button_font, BLACK, screen, 235 + (button_width + button_gap) * 2,
                                     300, button_width, button_height)
 
         # detect clicks
