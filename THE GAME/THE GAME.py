@@ -42,15 +42,17 @@ pygame.mixer.music.play(-1)
 
 # upload images
 
-heart_image = pygame.image.load('heart.png')
+heart_image = pygame.image.load('img/heart.png')
 heart_image = pygame.transform.scale(heart_image, (40, 40))
-character_image = pygame.image.load('character.png')
-character_image = pygame.transform.scale(character_image, (40, 40))
-character_image_up = pygame.image.load('character_up.png')
-character_image_up = pygame.transform.scale(character_image_up, (40, 40))
-character_image_down = pygame.image.load('character_down.png')
-character_image_down = pygame.transform.scale(character_image_down, (40, 40))
-background_image = pygame.image.load("images/math wars.jpg")
+character_image = pygame.image.load('img/character.png')
+character_image = pygame.transform.scale(character_image, (60, 60))
+character_image_up = pygame.image.load('img/character_up.png')
+character_image_up = pygame.transform.scale(character_image_up, (60, 60))
+character_image_down = pygame.image.load('img/character_down.png')
+character_image_down = pygame.transform.scale(character_image_down, (60, 60))
+background_image = pygame.image.load("img/background_image.png")
+lvl_img = pygame.image.load('img/lvl.jpg')
+
 
 # draw texts
 
@@ -68,6 +70,17 @@ def draw_button(text, font, color, surface, x, y, width, height):
     text_rect = text_obj.get_rect(center=(x + width // 2, y + height // 2))
     surface.blit(text_obj, text_rect)
     return button_rect
+
+def draw_answer(surface, text, font, color, x, y):
+    answer_surface = pygame.Surface((50, 40), pygame.SRCALPHA)
+    text_surface = font.render(str(text), True, color)
+
+    text_rect = text_surface.get_rect(center=(25, 20))
+
+    answer_surface.blit(text_surface, text_rect)
+
+    surface.blit(answer_surface, (x, y))
+    pygame.draw.rect(surface, WHITE, (x, y, 50, 40), 3)
 
 
 def draw_header(surface, score, problem, lives):
@@ -281,7 +294,7 @@ while running:
 
         # projectile's initial position
 
-        projectile = [x_position + 20, y_position + 20]
+        projectile = [x_position + 35, y_position + 35]
         projectile_fired_direction = projectile_direction
         projectile_vertical_direction = projectile_vertical_direction
         pygame.time.delay(150)
@@ -289,6 +302,11 @@ while running:
     # calculates the character's rectangle to check collision
 
     character_rect = pygame.Rect(x_position, y_position, 40, 40)
+
+    if state == MENU:
+        screen.blit(background_image, (0, 0))
+    elif state == LEVEL_1 or state == LEVEL_2  or state == LEVEL_3:
+        screen.blit(lvl_img, (0, 0))
 
     if state == MENU:
 
@@ -353,10 +371,6 @@ while running:
         current_time = pygame.time.get_ticks()
         time_left = time_limit - (current_time - start_time)
 
-        # clear screen
-
-        screen.fill(BLACK)
-
         if time_left <= 0:
             state = 'victory'
 
@@ -375,8 +389,8 @@ while running:
 
         for i in range(13):
             square_x, square_y = positions[i]
-            square_rect = pygame.Rect(square_x, square_y, 60, 40)
-            pygame.draw.rect(screen, BLACK, square_rect)
+            square_rect = pygame.Rect(square_x, square_y, 50, 40)
+            draw_answer(screen, answers[i], button_font, WHITE, square_x, square_y)
             text_surface = button_font.render(str(answers[i]), True, WHITE)
             text_rect = text_surface.get_rect(center=square_rect.center)
             screen.blit(text_surface, text_rect)
