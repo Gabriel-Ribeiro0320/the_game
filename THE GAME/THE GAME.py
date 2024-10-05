@@ -36,6 +36,8 @@ score_and_time_font = pygame.font.SysFont(None, 10)
 # sounds
 
 paddle_sound = pygame.mixer.Sound('sounds/paddle.wav')
+pygame.mixer.music.load('sounds/megaman - soundtrack.mp3')
+pygame.mixer.music.play(-1)
 
 # upload images
 
@@ -205,7 +207,7 @@ lives = 3
 problem = ""
 answers = []
 positions = []
-move_speed = 0.5
+move_speed = 0.3
 start_time = pygame.time.get_ticks()
 time_limit = 60000
 time_left = time_limit
