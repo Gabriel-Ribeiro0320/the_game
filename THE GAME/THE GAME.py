@@ -23,6 +23,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (100, 100, 100)
 RED = (255, 0, 0)
+BROWN = (116, 97, 79)
 
 # fonts
 
@@ -49,6 +50,7 @@ character_image_up = pygame.image.load('character_up.png')
 character_image_up = pygame.transform.scale(character_image_up, (40, 40))
 character_image_down = pygame.image.load('character_down.png')
 character_image_down = pygame.transform.scale(character_image_down, (40, 40))
+background_image = pygame.image.load("images/math wars.jpg")
 
 # draw texts
 
@@ -182,7 +184,6 @@ def level_3():
 
 # check if the character collided with any blocks
 
-
 def check_collision_with_blocks(character_rect, answer_rects):
     for rect, _ in answer_rects:
         if character_rect.colliderect(rect):
@@ -288,20 +289,19 @@ while running:
 
     character_rect = pygame.Rect(x_position, y_position, 40, 40)
 
-    # clear screen
-
-    screen.fill(BLACK)
-
     if state == MENU:
+
+        # upload images
+
+        screen.blit(background_image, (0, 0))
 
         # draw menu interface
 
         menu_text_pos = (menu_text_width, menu_text_height)
-        draw_text('MATH WARS', font, WHITE, screen, menu_text_pos)
         secondary_text_pos = (menu_text_width + 70, smaller_text_height)
         draw_text('ESCOLHA A DIFICULDADE:', smaller_font,
                   WHITE, screen, secondary_text_pos)
-        secondary_text_pos_2 = (200, smaller_text_height + 400)
+        secondary_text_pos_2 = (200, smaller_text_height + 410)
         draw_text(
             '*Nível 1 - Adição e Subtração *Nível 2 - Multiplicação e Divisão *Nível 3 - Expressões Númericas',
             smaller_font, WHITE, screen, secondary_text_pos_2)
@@ -312,12 +312,12 @@ while running:
         button_height = 50
         button_gap = 50
 
-        level1_button = draw_button('NÍVEL 1', button_font, BLACK, screen, 235, 300, button_width,
+        level1_button = draw_button('NÍVEL 1', button_font, BROWN, screen, 235, 295, button_width,
                                     button_height)
-        level2_button = draw_button('NÍVEL 2', button_font, BLACK, screen, 235 + button_width + button_gap,
-                                    300, button_width, button_height)
-        level3_button = draw_button('NÍVEL 3', button_font, BLACK, screen, 235 + (button_width + button_gap) * 2,
-                                    300, button_width, button_height)
+        level2_button = draw_button('NÍVEL 2', button_font, BROWN, screen, 235 + button_width + button_gap,
+                                    295, button_width, button_height)
+        level3_button = draw_button('NÍVEL 3', button_font, BROWN, screen, 235 + (button_width + button_gap) * 2,
+                                    295, button_width, button_height)
 
         # detect clicks
 
@@ -351,6 +351,10 @@ while running:
 
         current_time = pygame.time.get_ticks()
         time_left = time_limit - (current_time - start_time)
+
+        # clear screen
+
+        screen.fill(BLACK)
 
         if time_left <= 0:
             state = 'victory'
