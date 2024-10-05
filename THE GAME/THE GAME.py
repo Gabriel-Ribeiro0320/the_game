@@ -221,6 +221,7 @@ projectile = None
 projectile_fired_direction = None
 character_image_current = character_image
 projectile_direction = 1
+projectile_vertical_direction = 0
 
 # character's starting position
 
