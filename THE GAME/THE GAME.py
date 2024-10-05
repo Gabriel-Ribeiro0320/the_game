@@ -301,7 +301,7 @@ while running:
 
     # calculates the character's rectangle to check collision
 
-    character_rect = pygame.Rect(x_position, y_position, 40, 40)
+    character_rect = pygame.Rect(x_position, y_position, 60, 60)
 
     if state == MENU:
         screen.blit(background_image, (0, 0))
