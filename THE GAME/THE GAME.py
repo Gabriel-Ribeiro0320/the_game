@@ -305,7 +305,7 @@ while running:
 
     if state == MENU:
         screen.blit(background_image, (0, 0))
-    elif state == LEVEL_1 or state == LEVEL_2  or state == LEVEL_3:
+    elif state == LEVEL_1 or state == LEVEL_2 or state == LEVEL_3:
         screen.blit(lvl_img, (0, 0))
 
     if state == MENU:
