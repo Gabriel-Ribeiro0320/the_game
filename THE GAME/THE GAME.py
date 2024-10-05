@@ -278,15 +278,15 @@ while running:
 
     if x_position < 0:
         x_position = 0
-    elif x_position > screen_width - 40:
-        x_position = screen_width - 40
+    elif x_position > screen_width - 60:
+        x_position = screen_width - 60
 
     # prevent the character from leaving the screen (vertical)
 
     if y_position < 70:
         y_position = 70
-    elif y_position > screen_height - 40:
-        y_position = screen_height - 40
+    elif y_position > screen_height - 60:
+        y_position = screen_height - 60
 
     # check if the player pressed SPACE to shoot
 
