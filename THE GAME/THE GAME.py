@@ -50,7 +50,6 @@ character_image_down = pygame.transform.scale(character_image_down, (40, 40))
 
 # draw texts
 
-
 def draw_text(text, font, color, surface, pos):
     text_obj = font.render(text, True, color)
     text_rect = text_obj.get_rect()
@@ -99,7 +98,7 @@ def generate_random_positions(num_answers, square_width, square_height, screen_w
         x = random.randint(70, screen_width - 70)
         y = random.randint(105, screen_height - 50)
         new_position = (x, y)
-        if not (460 < x < 540 and 460 < y < 540):
+        if not (400 < x < 600 and 400 < y < 600):
             if all(not (abs(new_position[0] - pos[0]) < square_width + square_gap and
                         abs(new_position[1] - pos[1]) < square_height + square_gap) for pos in positions):
                 positions.append(new_position)
@@ -138,7 +137,7 @@ def level_2():
         num2 = random.randint(1, 10)
         num1 = num2 * random.randint(1, 10)
         problem = f"({num1} {operation} {num2})"
-        correct_answer = num1 / num2
+        correct_answer = num1 // num2
     answers = [correct_answer]
 
     while len(answers) < 13:
@@ -281,8 +280,10 @@ while running:
         projectile = [x_position + 20, y_position + 20]
         projectile_fired_direction = projectile_direction
         projectile_vertical_direction = projectile_vertical_direction
+        pygame.time.delay(150)
 
     # calculates the character's rectangle to check collision
+
     character_rect = pygame.Rect(x_position, y_position, 40, 40)
 
     # clear screen
@@ -447,6 +448,7 @@ while running:
                             lives_deducted = True
 
                         # remove the projectile to don't remove too many lives
+
                         projectile = None
                     break
 
@@ -464,7 +466,7 @@ while running:
     if state == GAME_OVER:
         screen.fill(BLACK)
         game_over_text = font2.render("Boa Tentativa!", True, WHITE)
-        score_text = font3.render(f"Você acertou {score} perguntas!", True, WHITE)
+        score_text = font3.render(f"Acertou {score} perguntas!", True, WHITE)
         screen.blit(game_over_text, (screen_width // 2 -
                     game_over_text.get_width() // 2, 280))
         screen.blit(score_text, (screen_width // 2 -
@@ -478,7 +480,7 @@ while running:
     elif state == VICTORY:
         screen.fill(BLACK)
         victory_text = font2.render("Parabéns! Você resistiu bravamente!", True, WHITE)
-        score_text = font3.render(f"Você acertou {score} perguntas!", True, WHITE)
+        score_text = font3.render(f"Acertou {score} perguntas!", True, WHITE)
         screen.blit(victory_text, (screen_width // 2 -
                     victory_text.get_width() // 2, 280))
         screen.blit(score_text, (screen_width // 2 -
