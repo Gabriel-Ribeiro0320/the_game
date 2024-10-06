@@ -1,0 +1,107 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: black;
+    color: white;
+    line-height: 1.6;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: black;
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+.logo {
+    flex: 20%;
+    margin-left: 3%;
+}
+
+.menu {
+    flex: 70%;
+    text-align: right;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 20px 16px;
+    transition: 0.3s all;
+}
+
+.menu a:hover {
+    color: red;
+}
+
+#botao {
+    background: white;
+    padding: 10px 25px;
+    color: black;
+    border-radius: 5px;
+    margin-right: 10%;
+    margin-left: 8%;
+}
+
+#botao:hover {
+    border: none;
+    background: red;
+}
+
+.header {
+    padding: 150px 20px 20px;
+    text-align: center;
+}
+
+.headline h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.headline p {
+    font-size: 18px;
+    max-width: 800px;
+    margin: 0 auto 20px auto; /* Adicionando margem inferior para separação */
+}
+
+.game-features {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.game-features h2 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.game-features ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.game-features li {
+    font-size: 20px;
+    margin: 20px 0; /* Aumentando a margem vertical */
+}
+
+.game-features img {
+    max-width: 40%; /* Tamanho máximo das imagens */
+    margin: 10px 0; /* Margem para separar imagens do texto */
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: black;
+    color: white;
+}
+
