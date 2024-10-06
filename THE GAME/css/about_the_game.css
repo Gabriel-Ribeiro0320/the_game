@@ -70,7 +70,7 @@ body {
 .headline p {
     font-size: 18px;
     max-width: 800px;
-    margin: 0 auto 20px auto; /* Adicionando margem inferior para separação */
+    margin: 0 auto 20px auto; 
 }
 
 .game-features {
@@ -90,12 +90,12 @@ body {
 
 .game-features li {
     font-size: 20px;
-    margin: 20px 0; /* Aumentando a margem vertical */
+    margin: 20px 0; 
 }
 
 .game-features img {
-    max-width: 40%; /* Tamanho máximo das imagens */
-    margin: 10px 0; /* Margem para separar imagens do texto */
+    max-width: 40%; 
+    margin: 10px 0; 
 }
 
 .footer {
@@ -103,5 +103,12 @@ body {
     padding: 20px;
     background-color: black;
     color: white;
+}
+
+.video-headline{
+    margin-top: 200px;
+    height: auto; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
 }
 
