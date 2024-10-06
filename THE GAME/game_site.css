@@ -1,1 +1,171 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: black;
+}
+
+.navbar{
+    display: flex;
+    flex-flow: nowrap;
+    height: 100px;
+    background: black;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+}
+
+.logo{
+    flex: 20%;
+    margin-left: 3%;
+    /*border: 1px solid red;*/
+    color: red;
+    text-align: left;
+}
+
+.menu{
+    flex: 70%;
+    text-align: right;
+    /*border: 1px solid green;*/
+    padding: 20px;
+}
+
+.menu a{
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 20px 16px;
+    transition: 0.3s all;
+}
+
+.menu a:hover{
+    color: red;
+}
+
+#botao{
+    background: white;
+    padding: 10px 25px;
+    color: black;
+    border-radius: 5px;
+    margin-right: 10%;
+    margin-left: 8%;
+}
+
+#botao:hover{
+    border: none;
+    background: red;
+}
+
+.header{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    padding-top: 200px;
+}
+
+.headline{
+    margin-left: 10%;
+    flex: 40%;
+}
+
+.headline h2{
+    font-weight: 900;
+    font-size: 20px;
+    color: white;
+    padding: 0;
+    margin: 0;
+}
+
+.headline p{
+    color: white;
+    text-align: left;
+}
+
+.github-btn{
+    display: inline-block;
+    background: white;
+    padding: 20px;
+    color: black;
+    text-transform: uppercase;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.github-btn:hover{
+    background: red;
+    color: white;
+}
+
+.img-headline{
+    margin-right: 10%;
+    flex: 40%;
+    text-align: center;
+}
+
+section{
+    display:inline-block;
+    margin-top: 80px;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 5%;
+    text-align: center;
+}
+
+section h2{
+    width: 100%;
+    font-size: 50px;
+    margin: 0;
+    font-weight: bold;
+    font-family: 'Roboto',sans-serif;
+    color: white;
+}
+
+.cards{
+    display: inline-block;
+    width: 30%;
+    padding: 20px;
+    margin: 1%;
+    border: 1px solid white;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+}
+
+.cards h3{
+    color: white;
+}
+
+.cards p{
+    color: white;
+}
+
+.cards:hover{
+    color: black;
+    padding: 40px;
+}
+
+.cards:hover .cards-text{
+    display: none;
+}
+
+.cards:hover .text-pculto{
+    display: block
+}
+
+footer{
+    margin-top: 100px;
+    height: 600px;
+    text-align: center;
+    border-top: 5px solid white;
+}
+
+.logo-rodape{
+    padding: 100px;
+}
 
